@@ -8,6 +8,11 @@ import matplotlib.pyplot as plt
 
 import config as cfg
 
+"""
+    Correction of the code's structure and possible refactoring done by GitHub Copilot, OpenAI ChatGPT 2024.
+"""
+
+
 class MNISTModel(nn.Module):
     def __init__(self):
         super(MNISTModel, self).__init__()
@@ -137,7 +142,8 @@ def run(sgd_rate: float, sgd_mom_rate: float, momentum: float, adam_rate: float)
     print("\nTraining with SGD:")
     model_sgd = MNISTModel()
     optimizer_sgd = optim.SGD(model_sgd.parameters(), lr=sgd_rate)
-    model_sgd, train_losses_sgd, test_losses_sgd, accuracies_sgd = train_model(model_sgd, optimizer_sgd, train_loader, test_loader)
+    model_sgd, train_losses_sgd, test_losses_sgd, accuracies_sgd = train_model(model_sgd, optimizer_sgd, train_loader,
+                                                                               test_loader)
     plot_training_results(train_losses_sgd, test_losses_sgd, accuracies_sgd, "SGD")
     y_true_sgd, y_pred_sgd = evaluate_model(model_sgd, test_loader)
     plot_confusion_matrix(y_true_sgd, y_pred_sgd, "SGD")
@@ -146,7 +152,10 @@ def run(sgd_rate: float, sgd_mom_rate: float, momentum: float, adam_rate: float)
     print("\nTraining with SGD + Momentum:")
     model_momentum = MNISTModel()
     optimizer_momentum = optim.SGD(model_momentum.parameters(), lr=sgd_mom_rate, momentum=momentum)
-    model_momentum, train_losses_momentum, test_losses_momentum, accuracies_momentum = train_model(model_momentum, optimizer_momentum, train_loader, test_loader)
+    model_momentum, train_losses_momentum, test_losses_momentum, accuracies_momentum = train_model(model_momentum,
+                                                                                                   optimizer_momentum,
+                                                                                                   train_loader,
+                                                                                                   test_loader)
     plot_training_results(train_losses_momentum, test_losses_momentum, accuracies_momentum, "SGD + Momentum")
     y_true_momentum, y_pred_momentum = evaluate_model(model_momentum, test_loader)
     plot_confusion_matrix(y_true_momentum, y_pred_momentum, "SGD + Momentum")
@@ -155,7 +164,8 @@ def run(sgd_rate: float, sgd_mom_rate: float, momentum: float, adam_rate: float)
     print("\nTraining with Adam:")
     model_adam = MNISTModel()
     optimizer_adam = optim.Adam(model_adam.parameters(), lr=adam_rate)
-    model_adam, train_losses_adam, test_losses_adam, accuracies_adam = train_model(model_adam, optimizer_adam, train_loader, test_loader)
+    model_adam, train_losses_adam, test_losses_adam, accuracies_adam = train_model(model_adam, optimizer_adam,
+                                                                                   train_loader, test_loader)
     plot_training_results(train_losses_adam, test_losses_adam, accuracies_adam, "Adam")
     y_true_adam, y_pred_adam = evaluate_model(model_adam, test_loader)
     plot_confusion_matrix(y_true_adam, y_pred_adam, "Adam")
@@ -164,5 +174,3 @@ def run(sgd_rate: float, sgd_mom_rate: float, momentum: float, adam_rate: float)
 if __name__ == "__main__":
     # Example of running the function with learning rates and momentum
     run(cfg.SGD_RATE, cfg.SGD_MOMENTUM_RATE, cfg.MOMENTUM, cfg.ADAM_RATE)
-
-

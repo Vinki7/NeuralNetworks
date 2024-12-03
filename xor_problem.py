@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+"""
+    Correction of the code's structure and possible refactoring done by GitHub Copilot, OpenAI ChatGPT 2024.
+"""
+
 #-------------------------------- Linear layer --------------------------------
 class Linear:
     def __init__(self, num_of_inputs, num_of_outputs):# num_of_inputs: number of input neurons, num_of_outputs: number of output neurons
