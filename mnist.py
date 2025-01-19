@@ -12,20 +12,19 @@ import config as cfg
     Correction of the code's structure and possible refactoring done by GitHub Copilot, OpenAI ChatGPT 2024.
 """
 
-
 class MNISTModel(nn.Module):
     def __init__(self):
         super(MNISTModel, self).__init__()
         # Input to first hidden layer
-        self.fc1 = nn.Linear(28 * 28, 128)
-        self.relu1 = nn.ReLU()
+        self.fc1 = nn.Linear(28 * 28, 128) # 28x28 input to 128 hidden units, fully connected layer number 1
+        self.relu1 = nn.ReLU() # Activation function for the first hidden layer
 
         # First hidden to second hidden layer
-        self.fc2 = nn.Linear(128, 64)
-        self.relu2 = nn.ReLU()
+        self.fc2 = nn.Linear(128, 64) # 128 hidden units to 64 hidden units, fully connected layer number 2
+        self.relu2 = nn.ReLU() # Activation function for the second hidden layer
 
         # Second hidden to output layer
-        self.fc3 = nn.Linear(64, 10)
+        self.fc3 = nn.Linear(64, 10) # 64 hidden units to 10 output units, fully connected layer number 3
         self.softmax = nn.LogSoftmax(dim=1)  # Output activation for classification
 
     def forward(self, x):
@@ -45,34 +44,34 @@ def train_model(model, optimizer, train_loader, test_loader, epochs=cfg.EPOCH_CO
     train_losses, test_losses, accuracies = [], [], []
 
     for epoch in range(epochs):
-        model.train()
+        model.train() # Set model to training mode
         running_loss = 0
 
         for images, labels in train_loader:
-            images, labels = images.to(device), labels.to(device)
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            running_loss += loss.item()
+            images, labels = images.to(device), labels.to(device) # Move data to device
+            optimizer.zero_grad() # Zero the gradients
+            outputs = model(images) # Forward pass
+            loss = criterion(outputs, labels) # Calculate loss
+            loss.backward() # Backward pass
+            optimizer.step() # Update weights
+            running_loss += loss.item() # Accumulate loss
 
-        train_losses.append(running_loss / len(train_loader))
+        train_losses.append(running_loss / len(train_loader)) # Average loss per batch
 
-        model.eval()
+        model.eval() 
         correct, total, test_loss = 0, 0, 0
         with torch.no_grad():
             for images, labels in test_loader:
                 images, labels = images.to(device), labels.to(device)
-                outputs = model(images)
-                test_loss += criterion(outputs, labels).item()
-                _, predicted = torch.max(outputs, 1)
-                total += labels.size(0)
+                outputs = model(images) # Forward pass
+                test_loss += criterion(outputs, labels).item() # Accumulate loss for test set
+                _, predicted = torch.max(outputs, 1) # Get the predicted class
+                total += labels.size(0) # Accumulate total number of samples
                 correct += (predicted == labels).sum().item()
 
-        test_losses.append(test_loss / len(test_loader))
-        accuracy = 100 * correct / total
-        accuracies.append(accuracy)
+        test_losses.append(test_loss / len(test_loader)) # Average loss per batch
+        accuracy = 100 * correct / total # Calculate accuracy
+        accuracies.append(accuracy) # Store accuracy
 
         print(
             f'Epoch {epoch + 1}/{epochs}, Cumulative loss: {running_loss:.4f}, Test Loss: {test_loss:.4f}, Accuracy: {accuracy:.2f}%')
@@ -142,8 +141,7 @@ def run(sgd_rate: float, sgd_mom_rate: float, momentum: float, adam_rate: float)
     print("\nTraining with SGD:")
     model_sgd = MNISTModel()
     optimizer_sgd = optim.SGD(model_sgd.parameters(), lr=sgd_rate)
-    model_sgd, train_losses_sgd, test_losses_sgd, accuracies_sgd = train_model(model_sgd, optimizer_sgd, train_loader,
-                                                                               test_loader)
+    model_sgd, train_losses_sgd, test_losses_sgd, accuracies_sgd = train_model(model_sgd, optimizer_sgd, train_loader, test_loader)
     plot_training_results(train_losses_sgd, test_losses_sgd, accuracies_sgd, "SGD")
     y_true_sgd, y_pred_sgd = evaluate_model(model_sgd, test_loader)
     plot_confusion_matrix(y_true_sgd, y_pred_sgd, "SGD")
@@ -152,10 +150,7 @@ def run(sgd_rate: float, sgd_mom_rate: float, momentum: float, adam_rate: float)
     print("\nTraining with SGD + Momentum:")
     model_momentum = MNISTModel()
     optimizer_momentum = optim.SGD(model_momentum.parameters(), lr=sgd_mom_rate, momentum=momentum)
-    model_momentum, train_losses_momentum, test_losses_momentum, accuracies_momentum = train_model(model_momentum,
-                                                                                                   optimizer_momentum,
-                                                                                                   train_loader,
-                                                                                                   test_loader)
+    model_momentum, train_losses_momentum, test_losses_momentum, accuracies_momentum = train_model(model_momentum, optimizer_momentum, train_loader, test_loader)
     plot_training_results(train_losses_momentum, test_losses_momentum, accuracies_momentum, "SGD + Momentum")
     y_true_momentum, y_pred_momentum = evaluate_model(model_momentum, test_loader)
     plot_confusion_matrix(y_true_momentum, y_pred_momentum, "SGD + Momentum")
@@ -164,8 +159,7 @@ def run(sgd_rate: float, sgd_mom_rate: float, momentum: float, adam_rate: float)
     print("\nTraining with Adam:")
     model_adam = MNISTModel()
     optimizer_adam = optim.Adam(model_adam.parameters(), lr=adam_rate)
-    model_adam, train_losses_adam, test_losses_adam, accuracies_adam = train_model(model_adam, optimizer_adam,
-                                                                                   train_loader, test_loader)
+    model_adam, train_losses_adam, test_losses_adam, accuracies_adam = train_model(model_adam, optimizer_adam, train_loader, test_loader)
     plot_training_results(train_losses_adam, test_losses_adam, accuracies_adam, "Adam")
     y_true_adam, y_pred_adam = evaluate_model(model_adam, test_loader)
     plot_confusion_matrix(y_true_adam, y_pred_adam, "Adam")
@@ -174,3 +168,5 @@ def run(sgd_rate: float, sgd_mom_rate: float, momentum: float, adam_rate: float)
 if __name__ == "__main__":
     # Example of running the function with learning rates and momentum
     run(cfg.SGD_RATE, cfg.SGD_MOMENTUM_RATE, cfg.MOMENTUM, cfg.ADAM_RATE)
+
+
